@@ -17,7 +17,7 @@ export default defineConfig({
         name: 'Display',
         short_name: 'Display',
         description: 'Conexion con esp32',
-        theme_color: '#ffffff',
+        theme_color: '#319795',
         icons: [
           {
             src: 'android-chrome-192x192.png',
