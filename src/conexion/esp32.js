@@ -12,6 +12,7 @@ let uBitDevice;
 let rxCharacteristic;
 let onConnect;
 let onDisconnect;
+let onError;
 
 export async function connectButtonPressed() {
   try {
@@ -43,6 +44,7 @@ export async function connectButtonPressed() {
     onConnect();
   } catch (error) {
     console.log(error);
+    onError();
   }
 }
 
@@ -95,6 +97,9 @@ export function setOnDisconnect(onDisconnectionF) {
 
 export function setOnConnect(onConnectionF) {
   onConnect = onConnectionF;
+}
+export function setOnError(onErrorF) {
+  onError = onErrorF;
 }
 
 function eliminarDiacriticos(texto) {

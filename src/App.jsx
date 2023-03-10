@@ -22,12 +22,14 @@ import {
   sendMessage,
   setOnConnect,
   setOnDisconnect,
+  setOnError,
 } from './conexion/esp32';
 import './styles.css';
 
 function App() {
   const [isConectado, setConectado] = useState(false);
   const [isProcesando, setProcesando] = useState(false);
+  const [isMarquee, setMarquee] = useState(false);
   const toast = useToast();
 
   setOnConnect(() => {
@@ -36,6 +38,17 @@ function App() {
     toast({
       title: 'display conectado',
       status: 'success',
+      duration: 1000,
+      isClosable: false,
+      variant: 'subtle',
+    });
+  });
+
+  setOnError(() => {
+    setProcesando(false);
+    toast({
+      title: 'erorr',
+      status: 'error',
       duration: 1000,
       isClosable: false,
       variant: 'subtle',
@@ -67,16 +80,6 @@ function App() {
     <Box p="10" pt="0" pb="16" h="100svh">
       <VStack alignItems="start" h="100%">
         <Box h="10" position="relative" w="100%">
-          {isProcesando && (
-            <Spinner
-              color="yellow.500"
-              size="sm"
-              position="absolute"
-              top="60%"
-              right="0"
-            />
-          )}
-
           <Box
             w="2"
             h="2"
@@ -88,14 +91,26 @@ function App() {
           ></Box>
         </Box>
         <Heading as="h2" size="xl" mb="10">
-          {isConectado ? 'Conectado' : 'Listo para conectar'}
+          {isConectado ? (
+            'Conectado'
+          ) : (
+            <>
+              <>Listo para </>
+              <Box
+                display="inline-block"
+                color="teal.600"
+                onClick={handleConexion}
+              >
+                conectar
+              </Box>
+            </>
+          )}
         </Heading>
         {!isConectado && (
-          <>
-            <Text flex="1" pt="4">
-              Para conectarte al esp-32 da clic en el boton
-            </Text>
-          </>
+          <VStack flex="1">
+            <Text pt="4">Para conectarte al esp-32 da clic en el boton</Text>
+            {isProcesando && <Spinner color="teal.500" size="xl" />}
+          </VStack>
         )}
         {isConectado && (
           <VStack alignItems="start" w="100%" flex="1" spacing="6">
@@ -114,7 +129,8 @@ function App() {
                 disabled={!isConectado}
                 colorScheme="teal"
                 size="lg"
-                onChange={() => {
+                onChange={(e) => {
+                  setMarquee(e.target.checked);
                   sendMessage('|Marquee');
                 }}
                 id="marquee"
@@ -123,6 +139,7 @@ function App() {
                 Marquee
               </FormLabel>
             </HStack>
+
             <HStack>
               <Switch
                 disabled={!isConectado}
@@ -148,9 +165,8 @@ function App() {
                 min={0}
                 max={15}
                 size="lg"
-                onChangeEnd={(value) => {
-                  console.log(`|Brillo|${value}`);
-                  sendMessage(`|Brillo|${value}`);
+                onChangeEnd={(e) => {
+                  sendMessage(`|Brillo|${e}`);
                 }}
               >
                 <SliderTrack>
@@ -159,10 +175,32 @@ function App() {
                 <SliderThumb boxSize="6" />
               </Slider>
             </Box>
+            {isMarquee && (
+              <Box w="100%">
+                <FormLabel htmlFor="velocidad">Velocidad</FormLabel>
+                <Slider
+                  colorScheme="teal"
+                  id="velocidad"
+                  aria-label="velocidad"
+                  defaultValue={40}
+                  min={0}
+                  max={50}
+                  size="lg"
+                  onChangeEnd={(value) => {
+                    sendMessage(`|Velocidad|${70 - value}`);
+                  }}
+                >
+                  <SliderTrack>
+                    <SliderFilledTrack />
+                  </SliderTrack>
+                  <SliderThumb boxSize="6" />
+                </Slider>
+              </Box>
+            )}
           </VStack>
         )}
         <Button size="lg" w="100%" colorScheme="teal" onClick={handleConexion}>
-          {isConectado ? 'desconectar' : 'conectar'}
+          {isConectado ? 'DESCONECTAR' : 'CONECTAR'}
         </Button>
       </VStack>
     </Box>
