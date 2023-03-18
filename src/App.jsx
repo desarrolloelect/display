@@ -15,7 +15,7 @@ import {
   useToast,
   VStack,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
   connectButtonPressed,
   disconnectButtonPressed,
@@ -26,11 +26,25 @@ import {
 } from './conexion/esp32';
 import './styles.css';
 
+const debounce = (func, wait) => {
+  let timeout;
+
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
+};
+
 function App() {
   const [isConectado, setConectado] = useState(false);
   const [isProcesando, setProcesando] = useState(false);
   const [isMarquee, setMarquee] = useState(false);
   const toast = useToast();
+
+  const handleMensaje = useCallback(
+    debounce((inputVal) => sendMessage(inputVal), 200),
+    []
+  );
 
   setOnConnect(() => {
     setProcesando(false);
@@ -121,6 +135,7 @@ function App() {
                 disabled={!isConectado}
                 onChange={(e) => {
                   sendMessage(e.target.value);
+                  handleMensaje(e.target.value);
                 }}
               ></Input>
             </Box>
