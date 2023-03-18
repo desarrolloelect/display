@@ -1,6 +1,8 @@
 from machine import Pin, SPI
 from micropython import const
+from writer import Writer
 import framebuf, utime
+import nuevaFuente as fuente8x16
 
 _DIGIT_0 = const(0x1)
 
@@ -51,6 +53,7 @@ class Max7219(framebuf.FrameBuffer):
         self.cs = cs
         self.cs.init(Pin.OUT, True)
         
+        
         # marquee
         self.tiempoInicio = 0
         self.pasoMarquee = 0
@@ -70,6 +73,10 @@ class Max7219(framebuf.FrameBuffer):
 
         # Init display
         self.init_display()
+        
+        # writer para display de 16 de altura
+        self.wri = Writer(self, fuente8x16,False)
+        self.wri.set_clip(True, True, False)
 
     def _write_command(self, command, data):
         """Write command on SPI"""
@@ -106,23 +113,19 @@ class Max7219(framebuf.FrameBuffer):
         if utime.ticks_diff(tiempoActual,self.tiempoInicio)>=self.speedMarquee:
             self.pasoMarquee += 1
             self.tiempoInicio=tiempoActual
-            self.text(message, -self.pasoMarquee + 33, 0, color)
+            self.mostrarTexto(message, -self.pasoMarquee + 33, 0, color)
             self.show()            
             if self.pasoMarquee >= extent:
                 self.pasoMarquee = 0
-        """
-        for i in range(start, extent, -1):
-            self.fill(0)
-            self.text(message, i, 0, 1)
-            self.show()
-            print(i)
-            utime.sleep_ms(_SCROLL_SPEED_NORMAL)
-        """
+                
     def setMarqueeSpeed(self, time):
         self.speedMarquee=time
-    def mostrarTexto(self,texto):
-        self.text(texto,0,0,True);
+    def mostrarTexto(self, texto, x, y, color):
+        #self.text(texto,0,0,True)
+        self.wri.set_textpos(self, 0, x)
+        self.wri.printstring(texto, color)
         self.show()
+        
     def show(self):
         """Update display"""
         # Write line per line on the matrices

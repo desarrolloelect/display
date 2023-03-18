@@ -56,8 +56,9 @@ class Writer():
                 raise ValueError('row is out of range')
             s.text_row = row
         if col is not None:
-            if col < 0 or col >= device.width:
-                raise ValueError('col is out of range')
+            #if col < 0 or col >= device.width:
+            #    raise ValueError('col is out of range')
+            #print(col)
             s.text_col = col
         return s.text_row,  s.text_col
 
@@ -67,8 +68,8 @@ class Writer():
         if self.devid not in Writer.state:
             Writer.state[self.devid] = DisplayState()
         self.font = font
-        if font.height() >= device.height or font.max_width() >= device.width:
-            raise ValueError('Font too large for screen')
+        #if font.height() > device.height or font.max_width() >= device.width:
+        #    raise ValueError('Font too large for screen')
         # Allow to work with reverse or normal font mapping
         if font.hmap():
             self.map = framebuf.MONO_HMSB if font.reverse() else framebuf.MONO_HLSB
