@@ -59,6 +59,7 @@ class Max7219(framebuf.FrameBuffer):
         self.pasoMarquee = 0
         self.speedMarquee = _SCROLL_SPEED_NORMAL
         # Dimensions
+        self.isGrande = False
         self.width = width
         self.height = height
         # Guess matrices disposition
@@ -121,11 +122,16 @@ class Max7219(framebuf.FrameBuffer):
     def setMarqueeSpeed(self, time):
         self.speedMarquee=time
     def mostrarTexto(self, texto, x, y, color):
-        #self.text(texto,0,0,True)
-        self.wri.set_textpos(self, 0, x)
-        self.wri.printstring(texto, color)
-        self.show()
-        
+        if self.isGrande:
+            self.wri.set_textpos(self, 0, x)
+            self.wri.printstring(texto, color)
+            self.show()
+        else:
+            self.text(texto,x,y,not color)
+            self.show()
+            
+    def setMatrizGrande(self, isGrande):
+        self.isGrande = isGrande
     def show(self):
         """Update display"""
         # Write line per line on the matrices

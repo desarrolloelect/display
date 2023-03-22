@@ -36,8 +36,10 @@ const debounce = (func, wait) => {
 };
 
 function App() {
+  const [isEsperandoClick, setEsperandoClick] = useState(true);
   const [isConectado, setConectado] = useState(false);
   const [isProcesando, setProcesando] = useState(false);
+  const [isConfigurando, setConfigurando] = useState(false);
   const [isMarquee, setMarquee] = useState(false);
   const toast = useToast();
 
@@ -46,9 +48,16 @@ function App() {
     []
   );
 
-  setOnConnect(() => {
-    setProcesando(false);
+  const setSizeGrande = (isGrande) => {
+    setConfigurando(false);
     setConectado(true);
+    sendMessage(isGrande ? '|tamanoGrande' : '|tamanoChico');
+  };
+
+  setOnConnect(() => {
+    setEsperandoClick(false);
+    setProcesando(false);
+    setConfigurando(true);
     toast({
       title: 'display conectado',
       status: 'success',
@@ -70,8 +79,10 @@ function App() {
   });
 
   setOnDisconnect(() => {
-    setProcesando(false);
     setConectado(false);
+    setConfigurando(false);
+    setEsperandoClick(true);
+    setProcesando(false);
     toast({
       title: 'display desconectado',
       status: 'error',
@@ -105,9 +116,7 @@ function App() {
           ></Box>
         </Box>
         <Heading as="h2" size="xl" mb="10">
-          {isConectado ? (
-            'Conectado'
-          ) : (
+          {isEsperandoClick && (
             <>
               <>Listo para </>
               <Box
@@ -119,11 +128,38 @@ function App() {
               </Box>
             </>
           )}
+          {isConfigurando && 'Selecciona el tamaño'}
+          {isConectado && 'Conectado'}
         </Heading>
-        {!isConectado && (
+
+        {isEsperandoClick && (
           <VStack flex="1">
             <Text pt="4">Para conectarte al esp-32 da clic en el boton</Text>
             {isProcesando && <Spinner color="teal.500" size="xl" />}
+          </VStack>
+        )}
+        {isConfigurando && (
+          <VStack pt="6" w="100%" spacing="6">
+            <Button
+              size="lg"
+              w="100%"
+              colorScheme="teal"
+              onClick={() => {
+                setSizeGrande(false);
+              }}
+            >
+              32 x 8
+            </Button>
+            <Button
+              size="lg"
+              w="100%"
+              colorScheme="teal"
+              onClick={() => {
+                setSizeGrande(true);
+              }}
+            >
+              32 x 16
+            </Button>
           </VStack>
         )}
         {isConectado && (
@@ -214,9 +250,16 @@ function App() {
             )}
           </VStack>
         )}
-        <Button size="lg" w="100%" colorScheme="teal" onClick={handleConexion}>
-          {isConectado ? 'DESCONECTAR' : 'CONECTAR'}
-        </Button>
+        {!isConfigurando && (
+          <Button
+            size="lg"
+            w="100%"
+            colorScheme="teal"
+            onClick={handleConexion}
+          >
+            {isConectado ? 'DESCONECTAR' : 'CONECTAR'}
+          </Button>
+        )}
       </VStack>
     </Box>
   );
