@@ -1,9 +1,11 @@
+import { RepeatIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
   FormLabel,
   Heading,
   HStack,
+  IconButton,
   Input,
   Slider,
   SliderFilledTrack,
@@ -115,7 +117,7 @@ function App() {
             borderRadius="100%"
           ></Box>
         </Box>
-        <Heading as="h2" size="xl" mb="10">
+        <Heading w="100%" as="h2" size="xl" mb="10">
           {isEsperandoClick && (
             <>
               <>Listo para </>
@@ -129,7 +131,18 @@ function App() {
             </>
           )}
           {isConfigurando && 'Selecciona el tamaño'}
-          {isConectado && 'Conectado'}
+          {isConectado && (
+            <HStack w="100%">
+              <Box flex="1">Conectado </Box>
+              <IconButton
+                color="teal.600"
+                icon={<RepeatIcon />}
+                onClick={() => {
+                  sendMessage('|Reiniciar');
+                }}
+              />
+            </HStack>
+          )}
         </Heading>
 
         {isEsperandoClick && (

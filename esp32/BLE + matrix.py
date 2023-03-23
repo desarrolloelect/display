@@ -70,7 +70,13 @@ while True:
             elif comando == ('|tamanoChico'):
                 display=Max7219(32,8, spi, cs, False)
                 display.setMatrizGrande(False)
-                
+            elif comando == '|Reiniciar':
+                print(display.isMatrizGrande())
+                if display.isMatrizGrande():
+                    display=Max7219(32,16, spi, cs, False)
+                    display.setMatrizGrande(True)
+                else:
+                    display=Max7219(32,8, spi, cs, False)
         else:
             texto=str(comando)
     time.sleep_ms(5)

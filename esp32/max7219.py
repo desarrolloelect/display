@@ -132,6 +132,8 @@ class Max7219(framebuf.FrameBuffer):
             
     def setMatrizGrande(self, isGrande):
         self.isGrande = isGrande
+    def isMatrizGrande(self):
+        return self.isGrande
     def show(self):
         """Update display"""
         # Write line per line on the matrices
