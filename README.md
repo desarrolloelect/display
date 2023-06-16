@@ -1,5 +1,5 @@
 # App para display esp32
-App web que funciona como interfaz para un display max7219 32x8 y 32x16
+App web que funciona como interfaz para un display max7219 32x8 y 32x16 
 <div align="center">
    <img src="https://github.com/KevinGrajeda/display/assets/60023139/a518695d-3d0a-4481-979e-672ed55adf27" height="400">
 </div>
